@@ -2,6 +2,8 @@ package io.bobaikato.demo.sse;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -21,6 +23,8 @@ public class SseEngine {
 
     private final Map<Long, List<SseEmitter>> emittersMap = new ConcurrentHashMap<>();
 
+    private final static Log LOGGER = LogFactory.getLog(SseEngine.class);
+
     void sendMessage(Long id, Message message) {
         var emitterList = emittersMap.get(id);
         try {
@@ -34,7 +38,9 @@ public class SseEngine {
                     }
                 });
             }
-        } catch (ConcurrentModificationException | NullPointerException e) {
+        } catch (ConcurrentModificationException e) {
+            LOGGER.info(String.format("(Sending Msg) Concurrent Modification Exception: %s", e));
+        } catch (NullPointerException e) {
             /* *
              * Recommendation: Log Exception and since there isn't
              * any ID to accept msg save in DB or msg will be lost
