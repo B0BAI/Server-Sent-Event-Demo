@@ -30,11 +30,11 @@ public class SseService {
                 } catch (IOException e) {
                     emitter.complete();
                     emitters.remove(id);
-                    e.printStackTrace();
+
                 }
             }
-        } catch (java.util.ConcurrentModificationException exception) {
-            System.out.println("HERE: " + exception);
+        } catch (java.util.ConcurrentModificationException e) {
+            e.printStackTrace();
         }
         System.out.println("Got message: " + message);
     }
