@@ -58,7 +58,6 @@ public class SseEngine {
                 stream(id, emitterList, sseEmitter);
             } else {
                 emitterList.add(sseEmitter);
-                emittersMap.put(id, emitterList);
             }
         } catch (NullPointerException e) {
             stream(id, emitterList, sseEmitter);
