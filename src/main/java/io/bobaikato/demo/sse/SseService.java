@@ -1,5 +1,6 @@
 package io.bobaikato.demo.sse;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,7 +27,6 @@ public class SseService {
                 } catch (IOException e) {
                     emitter.complete();
                     emitters.remove(id);
-
                 }
             }
         } catch (java.util.ConcurrentModificationException e) {
@@ -36,8 +36,11 @@ public class SseService {
     }
 
     SseEmitter stream(Long id) {
-        SseEmitter emitter = new SseEmitter();
-        emitters.put(id, emitter);
+        SseEmitter emitter = emitters.get(id);
+        if (emitter == null) {
+            emitter = new SseEmitter();
+            emitters.put(id, emitter);
+        }
         emitter.onCompletion(() -> emitters.remove(id));
         emitter.onTimeout(emitter::complete);
         return emitter;
