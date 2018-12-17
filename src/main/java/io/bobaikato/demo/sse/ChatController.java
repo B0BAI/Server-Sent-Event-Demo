@@ -20,14 +20,6 @@ public class ChatController {
         sseService.sendMessage(id, message);
     }
 
-    @GetMapping(path = "/loops")
-    public void sendMessages() {
-        for (int a = 0; a <= 100; ++a) {
-            sseService.sendMessage(new Message("Bobai", "Hey " + a));
-        }
-    }
-
-
     @GetMapping(path = "/stream")
     public SseEmitter stream() {
         return sseService.stream();
