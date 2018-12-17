@@ -4,7 +4,7 @@ SSE is for Server Sent Events.
 
 ## Requirements
 
-* jdk8
+* jdk8 or Latest
 * Maven3
 
 ## Run
