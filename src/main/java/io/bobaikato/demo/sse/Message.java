@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 class Message {
     private String from;
-
     private String message;
 }
