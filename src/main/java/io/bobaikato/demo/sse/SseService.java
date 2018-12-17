@@ -35,7 +35,6 @@ public class SseService {
         System.out.println("Got message: " + message);
     }
 
-
     SseEmitter stream(Long id) {
         SseEmitter emitter = new SseEmitter();
         emitters.put(id, emitter);
