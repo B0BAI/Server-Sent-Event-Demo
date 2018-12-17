@@ -8,33 +8,33 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 public class ChatController {
 
-    final private EmitterService emitterService;
+    final private SseService sseService;
 
     @Autowired
-    public ChatController(EmitterService emitterService) {
-        this.emitterService = emitterService;
+    public ChatController(SseService sseService) {
+        this.sseService = sseService;
     }
 
     @PostMapping(path = "/chat", consumes = "application/json", produces = "application/json")
     public Message sendMessage(@RequestBody Message message) {
-        return emitterService.sendMessage(message);
+        return sseService.sendMessage(message);
     }
 
     @GetMapping(path = "/loops")
     public void sendMessages() {
         for (int a = 0; a <= 100; ++a) {
-            emitterService.sendMessage(new Message("Bobai", "Hey " + a));
+            sseService.sendMessage(new Message("Bobai", "Hey " + a));
         }
     }
 
 
     @GetMapping(path = "/stream")
     public SseEmitter stream() {
-        return emitterService.stream();
+        return sseService.stream();
     }
 
     @GetMapping(path = "/streams")
     public SseEmitter streams() {
-        return emitterService.stream();
+        return sseService.stream();
     }
 }

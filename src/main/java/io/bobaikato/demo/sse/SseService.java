@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 @Service
-public class EmitterService {
+public class SseService {
 
     private List<SseEmitter> emitters = new Vector<>();
 
