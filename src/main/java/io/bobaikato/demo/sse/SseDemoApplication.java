@@ -11,5 +11,4 @@ public class SseDemoApplication {
 
         SpringApplication.run(SseDemoApplication.class, args);
     }
-
 }
