@@ -24,9 +24,4 @@ public class ChatController {
     public SseEmitter stream(@PathVariable("id") Long id) {
         return sseService.stream(id);
     }
-
-    @GetMapping(path = "/streams")
-    public SseEmitter streams() {
-        return sseService.stream();
-    }
 }
