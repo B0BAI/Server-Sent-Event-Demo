@@ -45,6 +45,7 @@ public class SseEngine {
              * Recommendation: Log Exception and since there isn't
              * any ID to accept msg save in DB or msg will be lost
              * */
+            LOGGER.warn("No Stream instance, data should be stored in DB");
         }
     }
 
@@ -66,6 +67,7 @@ public class SseEngine {
                 emitterList.add(sseEmitter);
             }
         } catch (NullPointerException e) {
+            LOGGER.warn("ID has no Stream instance");
             stream(id, emitterList, sseEmitter);
         }
         return sseEmitter;
