@@ -36,12 +36,11 @@ public class SseService {
     }
 
 
-    SseEmitter stream() {
+    SseEmitter stream(Long id) {
         SseEmitter emitter = new SseEmitter();
-        emitters.add(emitter);
-        emitter.onCompletion(() -> {
-            emitters.remove(emitter);
-        });
+        emitters.put(id, emitter);
+        emitter.onCompletion(() -> emitters.remove(id));
+        emitter.onTimeout(emitter::complete);
         return emitter;
     }
 }
