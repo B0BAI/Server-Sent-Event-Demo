@@ -20,9 +20,9 @@ public class ChatController {
         sseService.sendMessage(id, message);
     }
 
-    @GetMapping(path = "/stream")
-    public SseEmitter stream() {
-        return sseService.stream();
+    @GetMapping(path = "/stream/{id}")
+    public SseEmitter stream(@PathVariable("id") Long id) {
+        return sseService.stream(id);
     }
 
     @GetMapping(path = "/streams")
