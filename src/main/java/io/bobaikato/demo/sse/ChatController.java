@@ -8,20 +8,20 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RestController
 public class ChatController {
 
-    final private SseService sseService;
+    final private SseEngine sseEngine;
 
     @Autowired
-    public ChatController(SseService sseService) {
-        this.sseService = sseService;
+    public ChatController(SseEngine sseEngine) {
+        this.sseEngine = sseEngine;
     }
 
     @PostMapping(path = "/chat/{id}", consumes = "application/json", produces = "application/json")
     public void sendMessage( @PathVariable("id") Long id, @RequestBody Message message) {
-        sseService.sendMessage(id, message);
+        sseEngine.sendMessage(id, message);
     }
 
     @GetMapping(path = "/stream/{id}")
     public SseEmitter stream(@PathVariable("id") Long id) {
-        return sseService.stream(id);
+        return sseEngine.stream(id);
     }
 }

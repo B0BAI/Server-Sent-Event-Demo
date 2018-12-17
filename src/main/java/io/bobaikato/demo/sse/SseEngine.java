@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 @NoArgsConstructor
 @Component
-public class SseService {
+public class SseEngine {
 
     private final Map<Long, List<SseEmitter>> emittersMap = new ConcurrentHashMap<>();
 
