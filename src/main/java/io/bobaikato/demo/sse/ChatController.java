@@ -16,7 +16,7 @@ public class ChatController {
     }
 
     @PostMapping(path = "/chat/{id}", consumes = "application/json", produces = "application/json")
-    public void sendMessage(@RequestBody @PathVariable("id") Long id, Message message) {
+    public void sendMessage( @PathVariable("id") Long id, @RequestBody Message message) {
         sseService.sendMessage(id, message);
     }
 
