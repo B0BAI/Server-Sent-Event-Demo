@@ -5,24 +5,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 @Service
 public class CustomEmitterService {
 
-    private final List<SseEmitter> emitters = new ArrayList<>();
+    private List<SseEmitter> emitters = new Vector<>();
 
     Message sendMessage(Message message) {
         System.out.println("Got message: " + message);
-        for (SseEmitter emitter : emitters) {
-            try {
-                emitter.send(message, MediaType.APPLICATION_JSON);
-            } catch (IOException e) {
-                emitter.complete();
-                emitters.remove(emitter);
-                //e.printStackTrace();
-            }
+        try {
+            emitters.parallelStream().forEach(emitter -> {
+                try {
+                    emitter.send(message, MediaType.APPLICATION_JSON);
+                } catch (IOException e) {
+                    emitter.complete();
+                    emitters.remove(emitter);
+                    e.printStackTrace();
+                }
+            });
+        } catch (java.util.ConcurrentModificationException exception) {
+            System.out.println("HERE: " + exception);
         }
         return message;
     }
