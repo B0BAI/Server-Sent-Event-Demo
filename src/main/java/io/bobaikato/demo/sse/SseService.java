@@ -17,10 +17,6 @@ public class SseService {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    public SseEmitter getEmitterByUserId(long userId) {
-        return emitters.get(userId);
-    }
-
     void sendMessage(Long id, Message message) {
         SseEmitter emitter = emitters.get(id);
         try {
