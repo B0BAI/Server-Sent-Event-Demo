@@ -38,25 +38,29 @@ public class SseService {
         System.out.println("Got message: " + message);
     }
 
+    private void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
+        emittersMap.put(id, new Vector<>() {{
+            add(sseEmitter);
+        }});
+        sseEmitter.onCompletion(() -> emitterList.remove(sseEmitter));
+        sseEmitter.onTimeout(() -> emitterList.get(emitterList.indexOf(sseEmitter)).complete());
+    }
+
     SseEmitter stream(Long id) {
         List<SseEmitter> emitterList = emittersMap.get(id);
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter sseEmitter = new SseEmitter();
         System.out.println(emitterList);
         try {
             if (emitterList.isEmpty()) {
-                emittersMap.put(id, new Vector<>() {{
-                    add(emitter);
-                }});
-                emitter.onCompletion(() -> emitterList.remove(emitter));
-                emitter.onTimeout(() -> emitterList.get(emitterList.indexOf(emitter)).complete());
+                stream(id, emitterList, sseEmitter);
             } else {
-                emitterList.add(emitter);
+                emitterList.add(sseEmitter);
                 emittersMap.put(id, emitterList);
             }
         } catch (NullPointerException e) {
-
+            stream(id, emitterList, sseEmitter);
         }
-        return emitter;
+        return sseEmitter;
     }
 }
 
