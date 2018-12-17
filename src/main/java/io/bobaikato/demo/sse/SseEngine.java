@@ -22,7 +22,7 @@ public class SseEngine {
     private final Map<Long, List<SseEmitter>> emittersMap = new ConcurrentHashMap<>();
 
     void sendMessage(Long id, Message message) {
-        List<SseEmitter> emitterList = emittersMap.get(id);
+        var emitterList = emittersMap.get(id);
         try {
             if (!emitterList.isEmpty()) {
                 emitterList.parallelStream().forEach(emitter -> {
@@ -51,8 +51,8 @@ public class SseEngine {
     }
 
     SseEmitter stream(Long id) {
-        List<SseEmitter> emitterList = emittersMap.get(id);
-        SseEmitter sseEmitter = new SseEmitter();
+        var emitterList = emittersMap.get(id);
+        var sseEmitter = new SseEmitter();
         try {
             if (emitterList.isEmpty()) {
                 stream(id, emitterList, sseEmitter);
