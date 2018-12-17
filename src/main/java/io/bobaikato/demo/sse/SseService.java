@@ -6,6 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.ConcurrentModificationException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +30,16 @@ public class SseService {
                         emitter.send(message, MediaType.APPLICATION_JSON);
                     } catch (IOException e) {
                         emitter.complete();
-                        emittersMap.remove(id);
+                        emitterList.remove(emitter);
                     }
                 });
             }
-        } catch (java.util.ConcurrentModificationException e) {
-            e.printStackTrace();
+        } catch (ConcurrentModificationException | NullPointerException e) {
+            /* *
+             * Recommendation: Log Exception and since there isn't
+             * any ID to accept msg save in DB or msg will be lost
+             * */
         }
-        System.out.println("Got message: " + message);
     }
 
     private void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
@@ -49,7 +53,6 @@ public class SseService {
     SseEmitter stream(Long id) {
         List<SseEmitter> emitterList = emittersMap.get(id);
         SseEmitter sseEmitter = new SseEmitter();
-        System.out.println(emitterList);
         try {
             if (emitterList.isEmpty()) {
                 stream(id, emitterList, sseEmitter);
