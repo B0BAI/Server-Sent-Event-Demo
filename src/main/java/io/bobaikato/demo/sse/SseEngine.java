@@ -1,4 +1,4 @@
 package io.bobaikato.demo.sse;
 
-public class EmitterEngine {
+public class SseEngine {
 }
