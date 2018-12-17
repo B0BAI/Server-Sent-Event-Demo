@@ -1,34 +1,42 @@
 package io.bobaikato.demo.sse;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Vector;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Service
+@Data
+@NoArgsConstructor
+@Component
 public class SseService {
 
-    private List<SseEmitter> emitters = new Vector<>();
+    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
-    Message sendMessage(Message message) {
-        System.out.println("Got message: " + message);
+    public SseEmitter getEmitterByUserId(long userId) {
+        return emitters.get(userId);
+    }
+
+    void sendMessage(Long id, Message message) {
+        SseEmitter emitter = emitters.get(id);
         try {
-            emitters.parallelStream().forEach(emitter -> {
+            if (emitter != null) {
                 try {
                     emitter.send(message, MediaType.APPLICATION_JSON);
                 } catch (IOException e) {
                     emitter.complete();
-                    emitters.remove(emitter);
+                    emitters.remove(id);
                     e.printStackTrace();
                 }
-            });
+            }
         } catch (java.util.ConcurrentModificationException exception) {
             System.out.println("HERE: " + exception);
         }
-        return message;
+        System.out.println("Got message: " + message);
     }
 
 
