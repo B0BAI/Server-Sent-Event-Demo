@@ -8,9 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.ConcurrentModificationException;
-
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -25,7 +24,7 @@ public class SseEngine {
 
     private final static Log LOGGER = LogFactory.getLog(SseEngine.class);
 
-    void sendMessage(Long id, Message message) {
+    synchronized void sendMessage(Long id, Message message) {
         var emitterList = emittersMap.get(id);
         try {
             if (!emitterList.isEmpty()) {
@@ -49,15 +48,20 @@ public class SseEngine {
         }
     }
 
-    private void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
+    private synchronized void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
         emittersMap.put(id, new Vector<>() {{
             add(sseEmitter);
         }});
-        sseEmitter.onCompletion(() -> emitterList.remove(sseEmitter));
+
+        sseEmitter.onCompletion(() -> {
+            synchronized (emitterList) {
+                emitterList.remove(sseEmitter);
+            }
+        });
         sseEmitter.onTimeout(() -> emitterList.get(emitterList.indexOf(sseEmitter)).complete());
     }
 
-    SseEmitter stream(Long id) {
+    synchronized SseEmitter stream(Long id) {
         var emitterList = emittersMap.get(id);
         var sseEmitter = new SseEmitter();
         try {
