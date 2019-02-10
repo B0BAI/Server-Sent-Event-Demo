@@ -1,13 +1,14 @@
 package io.bobaikato.demo.sse;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+        import org.springframework.context.annotation.Configuration;
+        import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+        import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-        configurer.setDefaultTimeout(1000000);
+        //This timeout determines how long the connection is alive for. Use appropriately.
+        configurer.setDefaultTimeout(1000000L);
     }
 }
