@@ -19,12 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 @Component
 public class SseEngine {
-
+    
     private final Map<Long, List<SseEmitter>> emittersMap = new ConcurrentHashMap<>();
 
     private final static Log LOGGER = LogFactory.getLog(SseEngine.class);
 
-    synchronized void sendMessage(Long id, Message message) {
+    void sendMessage(Long id, Message message) {
         var emitterList = emittersMap.get(id);
         try {
             if (!emitterList.isEmpty()) {
@@ -48,7 +48,7 @@ public class SseEngine {
         }
     }
 
-    private synchronized void stream(Long id, SseEmitter sseEmitter) {
+    private void stream(Long id, SseEmitter sseEmitter) {
         emittersMap.put(id, new Vector<>() {{
             add(sseEmitter);
         }});
@@ -63,7 +63,7 @@ public class SseEngine {
         sseEmitter.onTimeout(() -> emitterList.get(emitterList.indexOf(sseEmitter)).complete());
     }
 
-    synchronized SseEmitter stream(Long id) {
+    SseEmitter stream(Long id) {
         var emitterList = emittersMap.get(id);
         var sseEmitter = new SseEmitter();
         try {
