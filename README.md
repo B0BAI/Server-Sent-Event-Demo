@@ -13,12 +13,6 @@ SSE is for Server Sent Events.
 mvn spring-boot:run
 ```
 
-## Takeaways
-
-* the timeout for the SSE - Emitters needs to be raised.
-* emitters need to be manually removed when the listener dies or on completion
-* SSE with Spring Boot is practically a no-brainer
-
 ## Test
 
 - #### Run on terminal
@@ -32,3 +26,9 @@ mvn spring-boot:run
     "message":"Then they could not carry on partisan investigations."
 }
 ```
+
+## Takeaways
+
+* the timeout for the SSE - Emitters needs to be raised.
+* emitters need to be manually removed when the listener dies or on completion
+* SSE with Spring Boot is practically a no-brainer
