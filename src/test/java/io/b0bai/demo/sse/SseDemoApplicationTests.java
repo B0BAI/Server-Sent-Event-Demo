@@ -1,4 +1,4 @@
-package io.bobaikato.demo.sse;
+package io.b0bai.demo.sse;
 
 public class SseDemoApplicationTests {
 

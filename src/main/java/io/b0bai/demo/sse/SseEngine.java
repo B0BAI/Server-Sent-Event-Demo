@@ -1,4 +1,4 @@
-package io.bobaikato.demo.sse;
+package io.b0bai.demo.sse;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
