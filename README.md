@@ -13,8 +13,6 @@ SSE is for Server Sent Events.
 mvn spring-boot:run
 ```
 
-Open localhost:8080
-
 ## Takeaways
 
 * the timeout for the SSE - Emitters needs to be raised.
