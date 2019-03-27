@@ -1,4 +1,4 @@
-package io.bobaikato.demo.sse;
+package io.b0bai.demo.sse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
