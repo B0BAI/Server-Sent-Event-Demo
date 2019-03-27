@@ -48,10 +48,12 @@ public class SseEngine {
         }
     }
 
-    private synchronized void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
+    private synchronized void stream(Long id, SseEmitter sseEmitter) {
         emittersMap.put(id, new Vector<>() {{
             add(sseEmitter);
         }});
+
+        var emitterList = emittersMap.get(id);
 
         sseEmitter.onCompletion(() -> {
             synchronized (emitterList) {
@@ -66,13 +68,13 @@ public class SseEngine {
         var sseEmitter = new SseEmitter();
         try {
             if (emitterList.isEmpty()) {
-                stream(id, emitterList, sseEmitter);
+                stream(id, sseEmitter);
             } else {
                 emitterList.add(sseEmitter);
             }
         } catch (NullPointerException e) {
             LOGGER.warn("ID has no Stream instance");
-            stream(id, emitterList, sseEmitter);
+            stream(id, sseEmitter);
         }
         return sseEmitter;
     }
