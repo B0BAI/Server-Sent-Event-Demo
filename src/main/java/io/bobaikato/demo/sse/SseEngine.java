@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.String.format;
+
 @Data
 @NoArgsConstructor
 @Component
@@ -24,7 +26,7 @@ public class SseEngine {
 
     private final static Log LOGGER = LogFactory.getLog(SseEngine.class);
 
-    synchronized void sendMessage(Long id, Message message) {
+    void sendMessage(Long id, Message message) {
         var emitterList = emittersMap.get(id);
         try {
             if (!emitterList.isEmpty()) {
@@ -38,7 +40,7 @@ public class SseEngine {
                 });
             }
         } catch (ConcurrentModificationException e) {
-            LOGGER.info(String.format("(Sending Msg) Concurrent Modification Exception: %s", e));
+            LOGGER.info(format("Sending Msg... Concurrent Modification Exception: %s", e));
         } catch (NullPointerException e) {
             /* *
              * Recommendation: Log Exception and since there isn't
@@ -48,31 +50,38 @@ public class SseEngine {
         }
     }
 
-    private synchronized void stream(Long id, List<SseEmitter> emitterList, SseEmitter sseEmitter) {
+    private void stream(Long id, SseEmitter sseEmitter) {
+        LOGGER.info(format("Creating new Stream Instance with Emitter list for ID: %d", id));
         emittersMap.put(id, new Vector<>() {{
             add(sseEmitter);
         }});
 
+        var emitterList = emittersMap.get(id);
+        LOGGER.info("Adding to onCompletion Listener.");
         sseEmitter.onCompletion(() -> {
             synchronized (emitterList) {
                 emitterList.remove(sseEmitter);
             }
         });
+
+        LOGGER.info("Adding Emitter to onTimeout Listener.");
         sseEmitter.onTimeout(() -> emitterList.get(emitterList.indexOf(sseEmitter)).complete());
     }
 
-    synchronized SseEmitter stream(Long id) {
+    SseEmitter stream(Long id) {
         var emitterList = emittersMap.get(id);
         var sseEmitter = new SseEmitter();
         try {
             if (emitterList.isEmpty()) {
-                stream(id, emitterList, sseEmitter);
+                LOGGER.info(format("ID: %d has no Emitter List.", id));
+                stream(id, sseEmitter);
             } else {
+                LOGGER.info(format("Adding new Emitter for ID: %d, to Emitter List.", id));
                 emitterList.add(sseEmitter);
             }
         } catch (NullPointerException e) {
-            LOGGER.warn("ID has no Stream instance");
-            stream(id, emitterList, sseEmitter);
+            LOGGER.warn(format("ID: %d, has no Emitter instance.", id));
+            stream(id, sseEmitter);
         }
         return sseEmitter;
     }
