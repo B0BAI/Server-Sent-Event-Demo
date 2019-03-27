@@ -20,3 +20,17 @@ Open localhost:8080
 * the timeout for the SSE - Emitters needs to be raised.
 * emitters need to be manually removed when the listener dies or on completion
 * SSE with Spring Boot is practically a no-brainer
+
+## Test
+
+- #### Run on terminal
+`curl -R http://localhost:8080/stream/<id>`
+
+- #### Post Request
+
+```json
+{
+    "from": "Name",
+    "message":"Then they could not carry on partisan investigations."
+}
+```
