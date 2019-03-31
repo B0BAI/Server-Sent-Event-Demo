@@ -18,7 +18,7 @@ mvn spring-boot:run
 - #### Run on terminal
 `curl -R http://localhost:8080/stream/<id>`
 
-- #### Post Request
+- #### Post Request : `http://localhost:8080/chat/<id>`
 
 ```json
 {
