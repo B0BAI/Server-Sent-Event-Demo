@@ -15,8 +15,7 @@ mvn spring-boot:run
 
 ## Test
 
-- #### Run on terminal
-`curl -R http://localhost:8080/stream/<id>`
+- #### Run on termina `curl -R http://localhost:8080/stream/<id>`
 
 - #### Post Request : `http://localhost:8080/chat/<id>`
 
