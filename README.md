@@ -22,12 +22,19 @@ mvn spring-boot:run
 `http://localhost:8080/chat/<id>`
 
 ```json
+http://localhost:8080/chat/<id>
 {
     "from": "Name",
     "message":"Then they could not carry on partisan investigations."
 }
 ```
-
+-- curl:
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"from":"xyz","message":"xyz"}' \
+  http://localhost:8080/chat/<id>
+```
 ## Takeaways
 
 * the timeout for the SSE - Emitters needs to be raised.
