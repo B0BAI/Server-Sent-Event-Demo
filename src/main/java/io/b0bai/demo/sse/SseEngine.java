@@ -34,7 +34,21 @@ public class SseEngine {
                     try {
                         emitter.send(message, MediaType.APPLICATION_JSON);
                     } catch (IOException e) {
-                        emitter.complete();
+                        LOGGER.info(format("IO Exception has occurred: %s", e));
+                        /**
+                         * When an emitter throws an IOException (e.g. if the remote client went away)
+                         * applications are not responsible for cleaning up the connection, and should not
+                         * invoke emitter.complete or emitter.completeWithError. Instead the servlet
+                         * container automatically initiates an AsyncListener error notification in which
+                         * Spring MVC makes a completeWithError call, which in turn performs one a final ASYNC
+                         * dispatch to the application during which Spring MVC invokes the configured exception
+                         * resolvers and completes the request.
+                         * emitter.complete();
+                         * @see <a href="https://docs.spring.io/spring/docs/5.0.x/spring-framework-reference/web.html#mvc-ann-async-objects">
+                         *     Read More here
+                         *     </a>
+                         */
+
                         emitterList.remove(emitter);
                     }
                 });
