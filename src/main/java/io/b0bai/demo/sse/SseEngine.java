@@ -49,6 +49,10 @@ public class SseEngine {
                          *     </a>
                          */
 
+                        /**
+                         * This must be removed to avoid:
+                         * java.lang.IllegalStateException: ResponseBodyEmitter is already set complete
+                         */
                         emitterList.remove(emitter);
                     }
                 });
@@ -79,7 +83,11 @@ public class SseEngine {
         });
 
         LOGGER.info("Adding Emitter to onTimeout Listener.");
-        sseEmitter.onTimeout(() -> emitterList.get(emitterList.indexOf(sseEmitter)).complete());
+        sseEmitter.onTimeout(() -> {
+            synchronized (emitterList) {
+                emitterList.remove(emitterList.indexOf(sseEmitter));
+            }
+        });
     }
 
     SseEmitter stream(Long id) {
