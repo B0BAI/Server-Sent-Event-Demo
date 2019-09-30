@@ -75,7 +75,7 @@ public final class SseEngine {
 
     private void stream(Long id, SseEmitter sseEmitter) {
         LOGGER.info(format("Creating new Stream Instance with Emitter list for ID: %d", id));
-        emittersMap.put(id, new Vector<>() {{
+        emittersMap.put(id, new ArrayList<>() {{
             add(sseEmitter);
         }});
 
