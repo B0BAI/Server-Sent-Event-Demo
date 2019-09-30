@@ -20,7 +20,7 @@ import static java.lang.String.format;
 @Data
 @NoArgsConstructor
 @Component
-public class SseEngine {
+public final class SseEngine {
 
     private final Map<Long, List<SseEmitter>> emittersMap = new ConcurrentHashMap<>();
 
