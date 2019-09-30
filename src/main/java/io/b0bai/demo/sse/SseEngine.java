@@ -27,11 +27,14 @@ public final class SseEngine {
     private final static Log LOGGER = LogFactory.getLog(SseEngine.class);
 
     void sendMessage(Long id, Message message) {
-        var emitterList = emittersMap.get(id);
+
+        final var emitterList = emittersMap.get(id);
+        final var emitterListIterator = emitterList.listIterator();
+
         try {
-            if (!emitterList.isEmpty()) {
-                emitterList.parallelStream().forEach(emitter -> {
+            emitterListIterator.forEachRemaining(emitter -> {
                     try {
+                    System.out.println("Sending Size: " + emitterList.size());
                         emitter.send(message, MediaType.APPLICATION_JSON);
                     } catch (IOException e) {
                         LOGGER.info(format("IO Exception has occurred: %s", e));
@@ -53,10 +56,12 @@ public final class SseEngine {
                          * This must be removed to avoid:
                          * java.lang.IllegalStateException: ResponseBodyEmitter is already set complete
                          */
+                    if (emitterList.size() > 0) {
                         emitterList.remove(emitter);
                     }
-                });
             }
+            });
+
         } catch (ConcurrentModificationException e) {
             LOGGER.info(format("Sending Msg... Concurrent Modification Exception: %s", e));
         } catch (NullPointerException e) {
