@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
@@ -33,33 +33,33 @@ public final class SseEngine {
 
         try {
             emitterListIterator.forEachRemaining(emitter -> {
-                    try {
+                try {
                     System.out.println("Sending Size: " + emitterList.size());
-                        emitter.send(message, MediaType.APPLICATION_JSON);
-                    } catch (IOException e) {
-                        LOGGER.info(format("IO Exception has occurred: %s", e));
-                        /**
-                         * When an emitter throws an IOException (e.g. if the remote client went away)
-                         * applications are not responsible for cleaning up the connection, and should not
-                         * invoke emitter.complete or emitter.completeWithError. Instead the servlet
-                         * container automatically initiates an AsyncListener error notification in which
-                         * Spring MVC makes a completeWithError call, which in turn performs one a final ASYNC
-                         * dispatch to the application during which Spring MVC invokes the configured exception
-                         * resolvers and completes the request.
-                         * emitter.complete();
-                         * @see <a href="https://docs.spring.io/spring/docs/5.0.x/spring-framework-reference/web.html#mvc-ann-async-objects">
-                         *     Read More here
-                         *     </a>
-                         */
+                    emitter.send(message, MediaType.APPLICATION_JSON);
+                } catch (IOException e) {
+                    LOGGER.info(format("IO Exception has occurred: %s", e));
+                    /**
+                     * When an emitter throws an IOException (e.g. if the remote client went away)
+                     * applications are not responsible for cleaning up the connection, and should not
+                     * invoke emitter.complete or emitter.completeWithError. Instead the servlet
+                     * container automatically initiates an AsyncListener error notification in which
+                     * Spring MVC makes a completeWithError call, which in turn performs one a final ASYNC
+                     * dispatch to the application during which Spring MVC invokes the configured exception
+                     * resolvers and completes the request.
+                     * emitter.complete();
+                     * @see <a href="https://docs.spring.io/spring/docs/5.0.x/spring-framework-reference/web.html#mvc-ann-async-objects">
+                     *     Read More here
+                     *     </a>
+                     */
 
-                        /**
-                         * This must be removed to avoid:
-                         * java.lang.IllegalStateException: ResponseBodyEmitter is already set complete
-                         */
+                    /**
+                     * This must be removed to avoid:
+                     * java.lang.IllegalStateException: ResponseBodyEmitter is already set complete
+                     */
                     if (emitterList.size() > 0) {
                         emitterList.remove(emitter);
                     }
-            }
+                }
             });
 
         } catch (ConcurrentModificationException e) {
@@ -79,25 +79,25 @@ public final class SseEngine {
             add(sseEmitter);
         }});
 
-        var emitterList = emittersMap.get(id);
+       final var emitterList = emittersMap.get(id);
         LOGGER.info("Adding to onCompletion Listener.");
         sseEmitter.onCompletion(() -> {
-            synchronized (emitterList) {
-                emitterList.remove(sseEmitter);
-            }
+            // synchronized (emitterList) {
+            emitterList.remove(sseEmitter);
+            // }
         });
 
         LOGGER.info("Adding Emitter to onTimeout Listener.");
         sseEmitter.onTimeout(() -> {
             synchronized (emitterList) {
-                emitterList.remove(emitterList.indexOf(sseEmitter));
+                emitterList.remove(sseEmitter);
             }
         });
     }
 
     SseEmitter stream(Long id) {
-        var emitterList = emittersMap.get(id);
-        var sseEmitter = new SseEmitter();
+        final var emitterList = emittersMap.get(id);
+        final var sseEmitter = new SseEmitter();
         try {
             if (emitterList.isEmpty()) {
                 LOGGER.info(format("ID: %d has no Emitter List.", id));
