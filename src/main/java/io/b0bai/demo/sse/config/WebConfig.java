@@ -1,4 +1,4 @@
-package io.b0bai.demo.sse;
+package io.b0bai.demo.sse.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
